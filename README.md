@@ -1,10 +1,10 @@
 # copilot-skill-acli-jira
 
-GitHub Copilot skill voor de officiële **Atlassian CLI (`acli`)** op Windows — installeren, authenticeren en Jira issues beheren vanuit de terminal.
+GitHub Copilot skill for the official **Atlassian CLI (`acli`)** on Windows — install, authenticate, and manage Jira issues from the terminal.
 
-## Installeren
+## Installation
 
-Kopieer de skill naar je persoonlijke Copilot skills-map:
+Copy the skill to your personal Copilot skills folder:
 
 ```powershell
 $dest = "$env:USERPROFILE\.copilot\skills\acli-jira"
@@ -12,19 +12,19 @@ New-Item -ItemType Directory -Path $dest -Force | Out-Null
 Copy-Item ".github\skills\acli-jira\*" $dest -Recurse
 ```
 
-Of zet de map `.github/skills/acli-jira/` direct in je teamrepo — dan is `/acli-jira` automatisch beschikbaar voor iedereen die de repo opent in VS Code met Copilot.
+Or place the `.github/skills/acli-jira/` folder directly in your team repository — then `/acli-jira` is automatically available for everyone who opens the repo in VS Code with Copilot.
 
-## Gebruik
+## Usage
 
-Typ `/acli-jira` in GitHub Copilot Chat. De skill begeleidt je door:
-- Installatie via `winget`
-- Authenticatie via OAuth (browser) of API token
-- Issues ophalen, aanmaken, bewerken en transitie
-- JQL-queries en scripting
+Type `/acli-jira` in GitHub Copilot Chat. The skill guides you through:
+- Installation via `winget`
+- Authentication via OAuth (browser) or API token
+- Retrieving, creating, editing, and transitioning issues
+- JQL queries and scripting
 
-## Inhoud
+## Contents
 
-| Bestand | Beschrijving |
+| File | Description |
 |---|---|
-| `SKILL.md` | Volledige workflow en procedures |
-| `commands-reference.md` | Compleet overzicht van alle commando's en JQL-voorbeelden |
+| `SKILL.md` | Full workflow and procedures |
+| `commands-reference.md` | Complete reference for all commands and JQL examples |
