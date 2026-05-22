@@ -169,32 +169,32 @@ acli jira workitem transition --jql "project = PROJ AND assignee = currentUser()
 #### Comments
 
 ```powershell
-# Lijst met comments (let op: body wordt afgekapt in de output)
+# List comments (note: body is truncated in the output)
 acli jira workitem comment list --key "PROJ-123"
 
-# Volledige comment body ophalen — via workitem view JSON
+# Get full comment body — via workitem view JSON
 acli jira workitem view "PROJ-123" --json --fields "*all" | Out-File -FilePath "PROJ-123.json" -Encoding utf8
-# Body staat in: fields.comment.comments[].body (ADF format)
+# Body is located at: fields.comment.comments[].body (ADF format)
 
-# Comment toevoegen (plain text — geen opmaak in Jira)
-acli jira workitem comment create --key "PROJ-123" --body "Tekst hier"
+# Add a comment (plain text — no formatting in Jira)
+acli jira workitem comment create --key "PROJ-123" --body "Text here"
 
-# Comment toevoegen met opmaak (ADF JSON — zie template hieronder)
+# Add a comment with formatting (ADF JSON — see template below)
 acli jira workitem comment create --key "PROJ-123" --body-file "comment.json"
 
-# Comment bijwerken
+# Update a comment
 acli jira workitem comment update --key "PROJ-123" --id "123456" --body-file "comment.json"
 
-# Comment verwijderen
+# Delete a comment
 acli jira workitem comment delete --key "PROJ-123" --id "123456"
 ```
 
-> **Tip — opmaak**: plain text (`-` streepjes) worden in Jira als letterlijke tekst weergegeven, geen echte bullets.  
-> Gebruik **ADF JSON** voor correcte opmaak (zie template hieronder).
+> **Tip — formatting**: plain text (`-` dashes) render as literal text in Jira, not as real bullets.  
+> Use **ADF JSON** for proper formatting (see template below).
 
 ##### ADF template — bullet list comment
 
-Sla op als `comment.json`, gebruik `--body-file comment.json`, verwijder daarna:
+Save as `comment.json`, use `--body-file comment.json`, then delete the file:
 
 ```json
 {
@@ -213,7 +213,7 @@ Sla op als `comment.json`, gebruik `--body-file comment.json`, verwijder daarna:
           "content": [
             {
               "type": "paragraph",
-              "content": [{ "type": "text", "text": "Eerste bullet" }]
+              "content": [{ "type": "text", "text": "First bullet" }]
             }
           ]
         },
@@ -222,7 +222,7 @@ Sla op als `comment.json`, gebruik `--body-file comment.json`, verwijder daarna:
           "content": [
             {
               "type": "paragraph",
-              "content": [{ "type": "text", "text": "Tweede bullet" }]
+              "content": [{ "type": "text", "text": "Second bullet" }]
             }
           ]
         }
@@ -232,7 +232,7 @@ Sla op als `comment.json`, gebruik `--body-file comment.json`, verwijder daarna:
 }
 ```
 
-> Maak het bestand aan met de `create_file` tool — gebruik **geen** PowerShell here-strings (zie Troubleshooting).
+> Create the file using the `create_file` tool — do **not** use PowerShell here-strings (see Troubleshooting).
 
 ---
 
@@ -273,9 +273,9 @@ acli jira workitem create --help
 | Browser does not open with `--web` | Use the API token method (Option B) |
 | `unauthorized` when running commands | Re-run `acli jira auth login --web` |
 | Site not found | Check the full URL: `yourcompany.atlassian.net` (without `https://`) |
-| Comment body afgekapt in `comment list` | Gebruik `acli jira workitem view "PROJ-123" --json --fields "*all"` en lees `fields.comment.comments[].body` |
-| Comment bullet points renderen niet in Jira | Gebruik ADF JSON formaat via `--body-file comment.json` i.p.v. plain text met `-` streepjes |
-| PowerShell here-string (`@"..."@`) lijkt te wachten maar heeft al uitgevoerd | De `>>` prompts zijn misleidend — commands ná de here-string kunnen al hebben gerund. Maak bestanden aan met `create_file` tool i.p.v. here-strings in de terminal |
+| Comment body truncated in `comment list` | Use `acli jira workitem view "PROJ-123" --json --fields "*all"` and read `fields.comment.comments[].body` |
+| Comment bullet points do not render in Jira | Use ADF JSON format via `--body-file comment.json` instead of plain text with `-` dashes |
+| PowerShell here-string (`@"..."@`) appears to be waiting but has already executed | The `>>` prompts are misleading — commands after the here-string may have already run. Create files using the `create_file` tool instead of here-strings in the terminal |
 
 ---
 
