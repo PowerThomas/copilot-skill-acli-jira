@@ -34,7 +34,14 @@ acli --version
 ```
 
 If the command is recognized: skip to **Step 3 (Authentication)**.  
-If you see `not recognized`: continue to **Step 2 (Installation)**.
+If you see `not recognized`, first try refreshing the PATH (acli may be installed but not yet on the current session's PATH):
+
+```powershell
+$env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+acli --version
+```
+
+If it still fails: continue to **Step 2 (Installation)**.
 
 ---
 
@@ -96,17 +103,23 @@ See [commands-reference.md](./commands-reference.md) for the full reference.
 #### Retrieve issues
 
 ```powershell
-# Recent work items in a project
-acli jira workitem list --project "PROJ"
+# Search work items in a project
+acli jira workitem search --project "PROJ"
 
 # Filter with JQL
-acli jira workitem list --jql "project = PROJ AND status = 'In Progress' AND assignee = currentUser()"
+acli jira workitem search --jql "project = PROJ AND status = 'In Progress' AND assignee = currentUser()"
 
-# View a specific issue
-acli jira workitem get --key "PROJ-123"
+# View a specific issue (key is a positional argument)
+acli jira workitem view "PROJ-123"
 
-# Output as JSON (for scripting)
-acli jira workitem list --project "PROJ" --output json
+# View as JSON (for scripting)
+acli jira workitem view "PROJ-123" --json
+
+# Capture view output to file (bypasses the built-in pager)
+acli jira workitem view "PROJ-123" --json --fields "*all" | Out-File -FilePath "PROJ-123.json" -Encoding utf8
+
+# Search and output as JSON
+acli jira workitem search --project "PROJ" --json
 ```
 
 #### Create issues
@@ -185,7 +198,8 @@ acli jira workitem create --help
 
 | Problem | Solution |
 |---|---|
-| `acli: not recognized` after installation | Refresh PATH: `$env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")` |
+| `acli: not recognized` (after install or in new terminal) | Refresh PATH: `$env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")` |
+| Output is cut off or requires pressing `q` | Pipe `view` to a file to bypass the pager: `acli jira workitem view "PROJ-123" --json \| Out-File issue.json` |
 | Browser does not open with `--web` | Use the API token method (Option B) |
 | `unauthorized` when running commands | Re-run `acli jira auth login --web` |
 | Site not found | Check the full URL: `yourcompany.atlassian.net` (without `https://`) |

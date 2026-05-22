@@ -6,9 +6,9 @@ Full reference for all available `acli jira` commands.
 
 | Goal | Command |
 |---|---|
-| List work items | `acli jira workitem list --project "PROJ"` |
-| Search with JQL | `acli jira workitem list --jql "<jql-query>"` |
-| View details | `acli jira workitem get --key "PROJ-123"` |
+| List / search work items | `acli jira workitem search --project "PROJ"` |
+| Search with JQL | `acli jira workitem search --jql "<jql-query>"` |
+| View details | `acli jira workitem view "PROJ-123"` |
 | Create (interactive) | `acli jira workitem create` |
 | Create (direct) | `acli jira workitem create --summary "..." --project "PROJ" --type "Bug"` |
 | Edit | `acli jira workitem edit --key "PROJ-123" --summary "..."` |
@@ -47,13 +47,22 @@ project = PROJ AND labels = "backend"
 
 ```powershell
 # Default (table)
-acli jira workitem list --project "PROJ"
+acli jira workitem search --project "PROJ"
 
-# JSON (for scripting or piping)
-acli jira workitem list --project "PROJ" --output json
+# JSON output for search
+acli jira workitem search --project "PROJ" --json
+
+# JSON output for a single issue
+acli jira workitem view "PROJ-123" --json
+
+# All fields (view)
+acli jira workitem view "PROJ-123" --json --fields "*all"
+
+# Capture to file (bypasses the built-in pager)
+acli jira workitem view "PROJ-123" --json --fields "*all" | Out-File -FilePath "PROJ-123.json" -Encoding utf8
 
 # Process JSON with PowerShell
-acli jira workitem list --project "PROJ" --output json | ConvertFrom-Json | Select-Object key, fields
+acli jira workitem search --project "PROJ" --json | ConvertFrom-Json | Select-Object key, fields
 ```
 
 ## Projects & Boards
