@@ -1,62 +1,62 @@
-# acli Jira — Commando's Referentie
+# acli Jira — Commands Reference
 
-Volledig overzicht van alle beschikbare `acli jira` commando's.
+Full reference for all available `acli jira` commands.
 
 ## Work Items
 
-| Doel | Commando |
+| Goal | Command |
 |---|---|
-| Lijst ophalen | `acli jira workitem list --project "PROJ"` |
-| Zoeken met JQL | `acli jira workitem list --jql "<jql-query>"` |
-| Details bekijken | `acli jira workitem get --key "PROJ-123"` |
-| Aanmaken (interactief) | `acli jira workitem create` |
-| Aanmaken (direct) | `acli jira workitem create --summary "..." --project "PROJ" --type "Bug"` |
-| Bewerken | `acli jira workitem edit --key "PROJ-123" --summary "..."` |
-| Status wijzigen | `acli jira workitem transition --key "PROJ-123" --status "Done"` |
-| Toewijzen | `acli jira workitem edit --key "PROJ-123" --assignee "user@bedrijf.com"` |
-| Verwijderen | `acli jira workitem delete --key "PROJ-123"` |
+| List work items | `acli jira workitem list --project "PROJ"` |
+| Search with JQL | `acli jira workitem list --jql "<jql-query>"` |
+| View details | `acli jira workitem get --key "PROJ-123"` |
+| Create (interactive) | `acli jira workitem create` |
+| Create (direct) | `acli jira workitem create --summary "..." --project "PROJ" --type "Bug"` |
+| Edit | `acli jira workitem edit --key "PROJ-123" --summary "..."` |
+| Transition status | `acli jira workitem transition --key "PROJ-123" --status "Done"` |
+| Assign | `acli jira workitem edit --key "PROJ-123" --assignee "user@company.com"` |
+| Delete | `acli jira workitem delete --key "PROJ-123"` |
 
 ## Work item types (--type)
 
-Veelgebruikte waarden: `Bug`, `Task`, `Story`, `Epic`, `Sub-task`  
-Exacte namen zijn projectafhankelijk — controleer via Jira UI of: `acli jira field list`
+Common values: `Bug`, `Task`, `Story`, `Epic`, `Sub-task`  
+Exact names are project-dependent — check via the Jira UI or: `acli jira field list`
 
-## JQL voorbeelden
+## JQL Examples
 
 ```jql
-# Alles toegewezen aan jou
+# Everything assigned to you
 assignee = currentUser()
 
-# Open issues in een project
+# Open issues in a project
 project = PROJ AND status != Done
 
-# Hoge prioriteit, aangemaakt deze week
+# High priority, created this week
 project = PROJ AND priority = High AND created >= startOfWeek()
 
-# Issues zonder toewijzing
+# Issues with no assignee
 project = PROJ AND assignee is EMPTY
 
-# Alle issues in de actieve sprint
+# All issues in the active sprint
 project = PROJ AND sprint in openSprints()
 
-# Specifiek label
+# Specific label
 project = PROJ AND labels = "backend"
 ```
 
-## Output formaten
+## Output Formats
 
 ```powershell
-# Standaard (tabel)
+# Default (table)
 acli jira workitem list --project "PROJ"
 
-# JSON (voor scripting of piping)
+# JSON (for scripting or piping)
 acli jira workitem list --project "PROJ" --output json
 
-# JSON verwerken met PowerShell
+# Process JSON with PowerShell
 acli jira workitem list --project "PROJ" --output json | ConvertFrom-Json | Select-Object key, fields
 ```
 
-## Projecten & Boards
+## Projects & Boards
 
 ```powershell
 acli jira project list
@@ -79,31 +79,31 @@ acli jira filter get --id 10001
 acli jira dashboard list
 ```
 
-## Authenticatie beheren
+## Manage Authentication
 
 ```powershell
-# Inlogstatus controleren
+# Check login status
 acli jira auth status
 
-# Opnieuw inloggen (OAuth)
+# Re-authenticate (OAuth)
 acli jira auth login --web
 
-# Uitloggen
+# Log out
 acli jira auth logout
 ```
 
-## Scripting voorbeeld: bulk-transitie
+## Scripting Example: Bulk Transition
 
 ```powershell
-# Alle 'To Do' issues van jou naar 'In Progress'
-acli jira workitem transition \
-  --jql "project = PROJ AND status = 'To Do' AND assignee = currentUser()" \
-  --status "In Progress" \
+# Move all your 'To Do' issues to 'In Progress'
+acli jira workitem transition `
+  --jql "project = PROJ AND status = 'To Do' AND assignee = currentUser()" `
+  --status "In Progress" `
   --yes
 ```
 
-## Documentatie
+## Documentation
 
-- Officiële docs: https://developer.atlassian.com/cloud/acli/
-- Commando's referentie: https://developer.atlassian.com/cloud/acli/reference/commands/jira/
-- Aan de slag: https://developer.atlassian.com/cloud/acli/guides/how-to-get-started/
+- Official docs: https://developer.atlassian.com/cloud/acli/
+- Commands reference: https://developer.atlassian.com/cloud/acli/reference/commands/jira/
+- Getting started: https://developer.atlassian.com/cloud/acli/guides/how-to-get-started/

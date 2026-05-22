@@ -1,87 +1,87 @@
 ---
 name: acli-jira
-description: "Installeer, authenticeer en gebruik de officiële Atlassian CLI (acli) voor Jira Cloud op Windows. Gebruik wanneer: Jira issues ophalen, aanmaken, bewerken of status wijzigen via de terminal; acli installeren op Windows via winget; acli authenticeren met Jira Cloud via OAuth of API token; work items zoeken met JQL; sprints, epics of projecten beheren vanuit de terminal."
-argument-hint: "Optioneel: beschrijf wat je wil doen, bijv. 'issues ophalen uit project PROJ' of 'nieuwe bug aanmaken'"
+description: "Install, authenticate, and use the official Atlassian CLI (acli) for Jira Cloud on Windows. Use when: retrieving, creating, editing, or transitioning Jira issues from the terminal; installing acli on Windows via winget; authenticating acli with Jira Cloud via OAuth or API token; searching work items with JQL; managing sprints, epics, or projects from the terminal."
+argument-hint: "Optional: describe what you want to do, e.g. 'list issues in project PROJ' or 'create a new bug'"
 ---
 
-# Atlassian CLI (acli) voor Jira Cloud
+# Atlassian CLI (acli) for Jira Cloud
 
-Officiële Atlassian CLI installeren, authenticeren en gebruiken voor dagelijks Jira-werk vanuit de terminal.
+Install, authenticate, and use the official Atlassian CLI for day-to-day Jira work from the terminal.
 
-## Wanneer gebruiken
+## When to Use
 
-- Jira issues ophalen, aanmaken, bewerken, of status wijzigen via de terminal
-- Acli installeren op een Windows-machine
-- Acli authenticeren met een Jira Cloud-omgeving
-- Work items zoeken met JQL-queries
-- Sprints, boards, projecten of epics beheren vanuit PowerShell/terminal
-- Automatiseren van terugkerende Jira-taken (CI/CD, scripts)
+- Retrieve, create, edit, or transition Jira issues from the terminal
+- Install acli on a Windows machine
+- Authenticate acli with a Jira Cloud environment
+- Search work items with JQL queries
+- Manage sprints, boards, projects, or epics from PowerShell/terminal
+- Automate repetitive Jira tasks (CI/CD, scripts)
 
-## Vereisten
+## Prerequisites
 
-- Windows met `winget` beschikbaar (standaard aanwezig op Windows 10/11)
-- Toegang tot een Jira Cloud-omgeving (bijv. `jouwbedrijf.atlassian.net`)
-- Atlassian-account met toegang tot het Jira-project
+- Windows with `winget` available (built-in on Windows 10/11)
+- Access to a Jira Cloud environment (e.g. `yourcompany.atlassian.net`)
+- Atlassian account with access to the Jira project
 
 ---
 
 ## Procedure
 
-### Stap 1 — Controleer of acli al geïnstalleerd is
+### Step 1 — Check if acli is already installed
 
 ```powershell
 acli --version
 ```
 
-Als het commando herkend wordt: ga naar **Stap 3 (Authenticatie)**.  
-Als je `not recognized` ziet: ga naar **Stap 2 (Installatie)**.
+If the command is recognized: skip to **Step 3 (Authentication)**.  
+If you see `not recognized`: continue to **Step 2 (Installation)**.
 
 ---
 
-### Stap 2 — Installeer acli via winget
+### Step 2 — Install acli via winget
 
 ```powershell
 winget install Atlassian.AtlassianCLI --accept-source-agreements --accept-package-agreements
 ```
 
-Na installatie is het PATH bijgewerkt, maar de huidige terminalsessie herkent `acli` nog niet.  
-Vernieuw het PATH **zonder de terminal te sluiten**:
+After installation the PATH is updated, but the current terminal session does not yet recognize `acli`.  
+Refresh the PATH **without closing the terminal**:
 
 ```powershell
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
-acli --version   # Moet nu werken
+acli --version   # Should work now
 ```
 
-> Nieuwe terminalsessies herkennen `acli` automatisch.
+> New terminal sessions will recognize `acli` automatically.
 
 ---
 
-### Stap 3 — Authenticeer bij Jira Cloud
+### Step 3 — Authenticate with Jira Cloud
 
-#### Optie A: OAuth via browser (aanbevolen, geen token nodig)
+#### Option A: OAuth via browser (recommended, no token required)
 
 ```powershell
 acli jira auth login --web
 ```
 
-De browser opent automatisch. Log in bij Atlassian, klik **Accept**, ga terug naar de terminal en selecteer je site (bijv. `jouwbedrijf.atlassian.net`) met Enter.
+The browser opens automatically. Log in to Atlassian, click **Accept**, return to the terminal, and select your site (e.g. `yourcompany.atlassian.net`) with Enter.
 
-#### Optie B: API token
+#### Option B: API token
 
-1. Ga naar: https://id.atlassian.com/manage-profile/security/api-tokens → **Create API token**
-2. Kopieer het token en voer uit:
-
-```powershell
-echo <jouw-token> | acli jira auth login --site "jouwbedrijf.atlassian.net" --email "jij@bedrijf.com" --token
-```
-
-Of lees het token uit een bestand (veiliger):
+1. Go to: https://id.atlassian.com/manage-profile/security/api-tokens → **Create API token**
+2. Copy the token and run:
 
 ```powershell
-acli jira auth login --site "jouwbedrijf.atlassian.net" --email "jij@bedrijf.com" --token < token.txt
+echo <your-token> | acli jira auth login --site "yourcompany.atlassian.net" --email "you@company.com" --token
 ```
 
-#### Controleer authenticatie
+Or read the token from a file (more secure):
+
+```powershell
+acli jira auth login --site "yourcompany.atlassian.net" --email "you@company.com" --token < token.txt
+```
+
+#### Verify authentication
 
 ```powershell
 acli jira auth status
@@ -89,77 +89,77 @@ acli jira auth status
 
 ---
 
-### Stap 4 — Gebruik: veelgebruikte commando's
+### Step 4 — Common commands
 
-Zie [commands-reference.md](./commands-reference.md) voor het volledige overzicht.
+See [commands-reference.md](./commands-reference.md) for the full reference.
 
-#### Issues ophalen
+#### Retrieve issues
 
 ```powershell
-# Recente work items in een project
+# Recent work items in a project
 acli jira workitem list --project "PROJ"
 
-# Filteren met JQL
+# Filter with JQL
 acli jira workitem list --jql "project = PROJ AND status = 'In Progress' AND assignee = currentUser()"
 
-# Specifieke issue bekijken
+# View a specific issue
 acli jira workitem get --key "PROJ-123"
 
-# Output als JSON (voor scripting)
+# Output as JSON (for scripting)
 acli jira workitem list --project "PROJ" --output json
 ```
 
-#### Issues aanmaken
+#### Create issues
 
 ```powershell
-# Interactief (vraagt om details)
+# Interactive (prompts for details)
 acli jira workitem create
 
-# Direct met alle parameters
-acli jira workitem create --summary "Nieuwe bug" --project "PROJ" --type "Bug"
+# Direct with all parameters
+acli jira workitem create --summary "New bug" --project "PROJ" --type "Bug"
 
-# Met meer details
-acli jira workitem create \
-  --summary "Taak omschrijving" \
-  --project "PROJ" \
-  --type "Task" \
-  --assignee "gebruiker@bedrijf.com" \
+# With additional details
+acli jira workitem create `
+  --summary "Task description" `
+  --project "PROJ" `
+  --type "Task" `
+  --assignee "user@company.com" `
   --label "backend,urgent"
 
-# Vanuit een tekstbestand
+# From a text file
 acli jira workitem create --from-file "issue.txt" --project "PROJ" --type "Story"
 ```
 
-#### Issues bewerken
+#### Edit issues
 
 ```powershell
-# Samenvatting aanpassen
-acli jira workitem edit --key "PROJ-123" --summary "Bijgewerkte samenvatting"
+# Update summary
+acli jira workitem edit --key "PROJ-123" --summary "Updated summary"
 
-# Toewijzen aan iemand
-acli jira workitem edit --key "PROJ-123" --assignee "gebruiker@bedrijf.com"
+# Assign to someone
+acli jira workitem edit --key "PROJ-123" --assignee "user@company.com"
 
-# Meerdere issues tegelijk bewerken via JQL
-acli jira workitem edit --jql "project = PROJ AND status = 'To Do'" --assignee "gebruiker@bedrijf.com" --yes
+# Edit multiple issues at once via JQL
+acli jira workitem edit --jql "project = PROJ AND status = 'To Do'" --assignee "user@company.com" --yes
 ```
 
-#### Status wijzigen (transitie)
+#### Transition status
 
 ```powershell
 acli jira workitem transition --key "PROJ-123" --status "In Progress"
 acli jira workitem transition --key "PROJ-123" --status "Done"
 
-# Meerdere issues via JQL
+# Multiple issues via JQL
 acli jira workitem transition --jql "project = PROJ AND assignee = currentUser()" --status "In Review" --yes
 ```
 
-#### Projecten, boards & sprints
+#### Projects, boards & sprints
 
 ```powershell
-# Beschikbare projecten
+# List available projects
 acli jira project list
 
-# Boards in een project
+# Boards in a project
 acli jira board list --project "PROJ"
 
 # Sprints
@@ -168,30 +168,30 @@ acli jira sprint list --project "PROJ"
 
 ---
 
-### Hulp & help
+### Help
 
 ```powershell
-# Overzicht van alle Jira-commando's
+# All Jira commands
 acli jira --help
 
-# Help per subcommando
+# Help per subcommand
 acli jira workitem --help
 acli jira workitem create --help
 ```
 
 ---
 
-## Probleemoplossing
+## Troubleshooting
 
-| Probleem | Oplossing |
+| Problem | Solution |
 |---|---|
-| `acli: not recognized` na installatie | Vernieuw PATH: `$env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")` |
-| Browser opent niet bij `--web` | Probeer API token-methode (Optie B) |
-| `unauthorized` bij commando's | Voer `acli jira auth login --web` opnieuw uit |
-| Site niet gevonden | Controleer de volledige URL: `jouwbedrijf.atlassian.net` (zonder `https://`) |
+| `acli: not recognized` after installation | Refresh PATH: `$env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")` |
+| Browser does not open with `--web` | Use the API token method (Option B) |
+| `unauthorized` when running commands | Re-run `acli jira auth login --web` |
+| Site not found | Check the full URL: `yourcompany.atlassian.net` (without `https://`) |
 
 ---
 
-## Voor collega's: skill delen
+## Sharing this skill with colleagues
 
-Zet de map `acli-jira/` in de repository onder `.github/skills/acli-jira/` zodat het team hem automatisch beschikbaar heeft in VS Code Copilot Chat via `/acli-jira`.
+Place the `acli-jira/` folder in your team repository under `.github/skills/acli-jira/` — then `/acli-jira` is automatically available for everyone who opens the repo in VS Code with Copilot.
