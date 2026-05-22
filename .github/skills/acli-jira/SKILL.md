@@ -166,6 +166,76 @@ acli jira workitem transition --key "PROJ-123" --status "Done"
 acli jira workitem transition --jql "project = PROJ AND assignee = currentUser()" --status "In Review" --yes
 ```
 
+#### Comments
+
+```powershell
+# Lijst met comments (let op: body wordt afgekapt in de output)
+acli jira workitem comment list --key "PROJ-123"
+
+# Volledige comment body ophalen — via workitem view JSON
+acli jira workitem view "PROJ-123" --json --fields "*all" | Out-File -FilePath "PROJ-123.json" -Encoding utf8
+# Body staat in: fields.comment.comments[].body (ADF format)
+
+# Comment toevoegen (plain text — geen opmaak in Jira)
+acli jira workitem comment create --key "PROJ-123" --body "Tekst hier"
+
+# Comment toevoegen met opmaak (ADF JSON — zie template hieronder)
+acli jira workitem comment create --key "PROJ-123" --body-file "comment.json"
+
+# Comment bijwerken
+acli jira workitem comment update --key "PROJ-123" --id "123456" --body-file "comment.json"
+
+# Comment verwijderen
+acli jira workitem comment delete --key "PROJ-123" --id "123456"
+```
+
+> **Tip — opmaak**: plain text (`-` streepjes) worden in Jira als letterlijke tekst weergegeven, geen echte bullets.  
+> Gebruik **ADF JSON** voor correcte opmaak (zie template hieronder).
+
+##### ADF template — bullet list comment
+
+Sla op als `comment.json`, gebruik `--body-file comment.json`, verwijder daarna:
+
+```json
+{
+  "version": 1,
+  "type": "doc",
+  "content": [
+    {
+      "type": "paragraph",
+      "content": [{ "type": "text", "text": "Intro tekst hier" }]
+    },
+    {
+      "type": "bulletList",
+      "content": [
+        {
+          "type": "listItem",
+          "content": [
+            {
+              "type": "paragraph",
+              "content": [{ "type": "text", "text": "Eerste bullet" }]
+            }
+          ]
+        },
+        {
+          "type": "listItem",
+          "content": [
+            {
+              "type": "paragraph",
+              "content": [{ "type": "text", "text": "Tweede bullet" }]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+> Maak het bestand aan met de `create_file` tool — gebruik **geen** PowerShell here-strings (zie Troubleshooting).
+
+---
+
 #### Projects, boards & sprints
 
 ```powershell
@@ -203,6 +273,9 @@ acli jira workitem create --help
 | Browser does not open with `--web` | Use the API token method (Option B) |
 | `unauthorized` when running commands | Re-run `acli jira auth login --web` |
 | Site not found | Check the full URL: `yourcompany.atlassian.net` (without `https://`) |
+| Comment body afgekapt in `comment list` | Gebruik `acli jira workitem view "PROJ-123" --json --fields "*all"` en lees `fields.comment.comments[].body` |
+| Comment bullet points renderen niet in Jira | Gebruik ADF JSON formaat via `--body-file comment.json` i.p.v. plain text met `-` streepjes |
+| PowerShell here-string (`@"..."@`) lijkt te wachten maar heeft al uitgevoerd | De `>>` prompts zijn misleidend — commands ná de here-string kunnen al hebben gerund. Maak bestanden aan met `create_file` tool i.p.v. here-strings in de terminal |
 
 ---
 
